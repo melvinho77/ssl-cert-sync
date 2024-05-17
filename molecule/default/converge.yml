@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include ssl-cert-sync"
+      include_role:
+        name: "ssl-cert-sync"
