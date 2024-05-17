@@ -1,4 +1,5 @@
 ---
+
 - name: Destroy
   hosts: localhost
   connection: local
@@ -11,6 +12,7 @@
         name: "{{ item.instance_id }}"
         state: absent
         delete_fip: true
+        verify: false
       register: server
       loop: "{{ lookup('file', molecule_instance_config, errors='ignore') | default([], true) | from_yaml | flatten(levels=1) }}"
       async: 7200
@@ -24,6 +26,13 @@
       retries: 300
       loop: "{{ server.results | flatten(levels=1) }}"
 
+    - name: Delete molecule key pair
+      os_keypair:
+        name: "key-pair-{{ molecule_yml['platforms'][0]['name'] }}"
+        verify: false
+        state: absent
+      when: server.results | length > 0
+
     # Mandatory configuration for Molecule to function.
 
     - name: Populate instance config
@@ -34,4 +43,5 @@
       copy:
         content: "{{ instance_conf | to_json | from_json | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
-      when: server.changed | bool
+        mode: "0644"
+      when: server.changed | bool  # noqa no-handler

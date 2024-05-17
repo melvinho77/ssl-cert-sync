@@ -1,16 +1,23 @@
 ---
+
 dependency:
   name: galaxy
+  options:
+    role-file: ${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml
 driver:
   name: openstack
 platforms:
-  - name: molecule-ssl-cert-sync
-    image: ${MOLECULE_OPENSTACK_IMAGE}
-    flavor: ${MOLECULE_OPENSTACK_FLAVOR}
-    network: ${MOLECULE_OPENSTACK_NETWORK:-molecule}
-    fip_pool: ${MOLECULE_OPENSTACK_FIP_POOL}
-    ssh_user: ${MOLECULE_OPENSTACK_SSH_USER:-cloud-user}
+  - name: molecule-ansible-ssl-cert-sync
+    image: ${MOLECULE_OPENSTACK_IMAGE:-golden-image-v1-14-2}
+    flavor: ${MOLECULE_OPENSTACK_FLAVOR:-tiny}
+    network: ${MOLECULE_OPENSTACK_NETWORK:-server_vlan}
+    ssh_user: ${MOLECULE_OPENSTACK_SSH_USER:-centos}
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
 provisioner:
   name: ansible
 verifier:
-  name: ansible
+  name: testinfra
