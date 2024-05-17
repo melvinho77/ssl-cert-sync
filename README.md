@@ -1,4 +1,4 @@
-# ansible-role-freeipa-client
+# ansible-role-freeipa-sync
 
 Install and configure freeipa client.
 
@@ -16,5 +16,5 @@ Install and configure freeipa client.
 - hosts: all
   become: true
   roles:
-    - role: ansible-role-freeipa-client
+    - role: ansible-ssl-cert-sync
 ```
